@@ -1,0 +1,28 @@
+# Object and binary directories
+obj/
+bin/
+
+# Compiled object files
+*.o
+*.obj
+
+# Compiled dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+SGenerator
+
+# large data
+log20170630.csv
+
