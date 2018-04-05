@@ -25,4 +25,5 @@ SGenerator
 
 # large data
 log20170630.csv
+*.tar
 
