@@ -46,15 +46,13 @@ class SessionGenerator {
 
  private:
   typedef std::list<Session*>::iterator ListIterator;
-  typedef std::unordered_map<std::string,std::list<Session*>::iterator>
-                                ::const_iterator MapIterator;
 
   int session_timeout_sec_;
   // Pointer not owned.
   std::ofstream* out_stream_;
   // List to store outstanding sessions.
   std::list<Session*> sessions_;
-  // a map from ip to list iterator
+  // A map from ip to list iterator.
   std::unordered_map<std::string, ListIterator> ip_to_sessions_;
 
   void PrintExpiredSessions(const time_t& timestamp);

@@ -31,9 +31,9 @@ bool PopulateEvent(const std::string& line, Event& event) {
 
     ss << attrs[1] << " " << attrs[2];
     timestamp = ss.str();
-    std::cout << "---------------" << std::endl;
-    std::cout << "reading records: " << attrs[0] << " " << timestamp << " "
-              << attrs[3] << std::endl;
+    //std::cout << "---------------" << std::endl;
+    //std::cout << "reading records: " << attrs[0] << " " << timestamp << " "
+    //          << attrs[3] << std::endl;
     event.ip = attrs[0];
     event.datetime = str_to_seconds(timestamp);
     return true;

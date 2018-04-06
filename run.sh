@@ -6,4 +6,5 @@
 #
 make clean
 make
-./bin/./SGenerator -i ./input/log.csv . -p ./input/inactivity_period.txt -o ./output/sessionization.txt
+#./bin/./SGenerator -i ./input/log.csv . -p ./input/inactivity_period.txt -o ./output/sessionization.txt
+./bin/./SGenerator -i ./input/log20170630.csv . -p ./input/inactivity_5min.txt -o ./output/session_log20170630.txt

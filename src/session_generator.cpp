@@ -21,7 +21,7 @@ void SessionGenerator::PrintExpiredSessions(const time_t& timestamp) {
   while (!sessions_.empty() &&
          sessions_.front()->tend < (timestamp - session_timeout_sec_)) {
     Session* front = sessions_.front();
-    std::cout << "expired ip " << front->ip << std::endl;
+    //std::cout << "expired ip " << front->ip << std::endl;
     candidates.insert(front);
     sessions_.pop_front();
   }
@@ -50,10 +50,10 @@ void SessionGenerator::PrintPendingEvents() {
 }
 
 void SessionGenerator::PrintSession(const Session* session) {
-  std::cout << "printing session: " << session->ip << ", "
-            << seconds_to_str(session->tstart) << ", "
-            << seconds_to_str(session->tend) << ", " << session->ndoc
-            << std::endl;
+  //std::cout << "printing session: " << session->ip << ", "
+  //          << seconds_to_str(session->tstart) << ", "
+  //          << seconds_to_str(session->tend) << ", " << session->ndoc
+  //          << std::endl;
   *out_stream_ << session->ip << "," << seconds_to_str(session->tstart) << ","
                << seconds_to_str(session->tend) << ","
                << session->tend - session->tstart + 1 << "," << session->ndoc
@@ -63,7 +63,7 @@ void SessionGenerator::PrintSession(const Session* session) {
 void SessionGenerator::AddNewEvent(const Event& event) {
   auto it = ip_to_sessions_.find(event.ip);
   if (it == ip_to_sessions_.end()) {  // add new session with new event
-    std::cout << "this is a new event" << std::endl;
+    //std::cout << "this is a new event" << std::endl;
     Session* session = new Session();
     session->ip = event.ip;
     session->tstart = event.datetime;
@@ -71,7 +71,7 @@ void SessionGenerator::AddNewEvent(const Event& event) {
     session->ndoc = 1;
     sessions_.push_back(session);
   } else {  // update existing session with new event
-    std::cout << "this is an old event" << std::endl;
+    //std::cout << "this is an old event" << std::endl;
     ListIterator session_iter = it->second;
     // update session properties
     (*session_iter)->tend = event.datetime;
@@ -85,6 +85,6 @@ void SessionGenerator::AddNewEvent(const Event& event) {
   std::list<Session*>::iterator iter = sessions_.end();
   iter--;
   ip_to_sessions_[event.ip] = iter;
-  std::cout << "event added, new list size is " << sessions_.size()
-            << " new map size is " << ip_to_sessions_.size() << std::endl;
+  //std::cout << "event added, new list size is " << sessions_.size()
+  //          << " new map size is " << ip_to_sessions_.size() << std::endl;
 }
