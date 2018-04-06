@@ -1,5 +1,5 @@
 
-OBJS = main.o sessionization.o utils.o
+OBJS = main.o session_generator.o utils.o
 
 EXEDIR = ../bin/
 EXEC = ${EXEDIR}SGenerator

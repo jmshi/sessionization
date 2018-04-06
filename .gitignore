@@ -1,6 +1,7 @@
 # Object and binary directories
 obj/
 bin/
+output/
 
 # Compiled object files
 *.o
@@ -26,4 +27,8 @@ SGenerator
 # large data
 log20170630.csv
 *.tar
+
+# misc.
+debug.sh
+dir.tree
 

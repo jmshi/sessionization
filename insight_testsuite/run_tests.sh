@@ -33,6 +33,7 @@ function check_project_struct {
   find_file_or_dir_in_project ${PROJECT_PATH} src
   find_file_or_dir_in_project ${PROJECT_PATH} input
   find_file_or_dir_in_project ${PROJECT_PATH} output
+  find_file_or_dir_in_project ${PROJECT_PATH} Makefile
 }
 
 # setup testing output folder
@@ -46,6 +47,7 @@ function setup_testing_input_output {
 
   cp -r ${PROJECT_PATH}/src ${TEST_OUTPUT_PATH}
   cp -r ${PROJECT_PATH}/run.sh ${TEST_OUTPUT_PATH}
+  cp -r ${PROJECT_PATH}/Makefile ${TEST_OUTPUT_PATH}
   cp -r ${PROJECT_PATH}/input ${TEST_OUTPUT_PATH}
   cp -r ${PROJECT_PATH}/output ${TEST_OUTPUT_PATH}
 
