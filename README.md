@@ -4,6 +4,7 @@
 2. [Data](README.md#data)
 3. [Methods](README.md#methods)
 4. [Usage](README.md#usage)
+4. [Tests](README.md#tests)
 5. [Dependence](README.md#dependence)
 6. [Directory](README.md#directory)
 
@@ -39,7 +40,7 @@ A single user session is defined to have started when the IP address first reque
 continues as long as the same user continues to make requests. The session is over after a certain period of inactive time. 
 An exmaple of sessionization can be illustrated as below:
 
-![End of file illustration](images/end_of_file.png)
+![End of file illustration](images/end_of_file.png)[fig1](#fig1)
 The identified sessions would read like given an inactive time limit of 2 seconds.
 
     101.81.133.jja,2017-06-30 00:00:00,2017-06-30 00:00:00,1,1
@@ -82,16 +83,41 @@ the first event), given a fixed inactive period. These sessions are then printed
 
 
 # Usage
-On top level of the package, execute 
+
+A simple two step is required to use the pipeline:
+
+1. Compiling: on top level of the package, execute 
+```bash
+make all
+```
+to compile the code. By default, the executable (`SGenerator`) is being stored in `./bin`. 
+
+2. Running: on top level, type
 ```bash
 ./run.sh 
 ```
-to compile and run the pipeline. By default, the executable (`SGenerator`) is being stored in `./bin`, input (`log.csv`) and parameter(e.g., `inactivity_period.txt`) files are under `./input`, and the generated sessions (`sessionization.csv`) are stored in `./output` directory.
+to run the pipeline. 
 
-It is easy to change this script to process different input files. In `run.sh`, you could specify different input, parameter, and output files:
+By default, the input (`log.csv`) and parameter(e.g., 
+`inactivity_period.txt`) files are under `./input`, and the generated 
+sessions (`sessionization.csv`) are stored in `./output` directory.
+
+But it is easy to change `run.sh` to process different input files. 
+In `run.sh`, you could specify different input, parameter, and output files:
 ```bash
-./bin/./SGenerator -i ./input/your_input_file . -p ./input/your_param_file -o ./output/your_output_file
+./bin/./SGenerator -i your_path_to_input/your_input_file . 
+-p .your_path_to_param/your_param_file 
+-o your_path_to_output/your_output_file
 ```
+
+# Tests
+Go to the `./insight_testsuite` directory and execute `run_tests.sh` after compiling the code with `make all` as described in previous section.
+
+There are three tests included:
+1. sample data provided as shown in first [Figure](README.md#fig1).
+2. test single session with multiple events
+3. test multiple sessions with same start/end times.
+4. test different inactive period.
 
 # Dependence 
 - c++ 11

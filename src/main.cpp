@@ -25,6 +25,7 @@ bool PopulateEvent(const std::string& line, Event& event) {
   std::vector<std::string> attrs;
   std::string attr, timestamp;
   std::stringstream ss;
+  // Skip header line starts with "ip"
   if (line.substr(0, 2) != "ip") {
     std::istringstream attrstream(line);
     while (std::getline(attrstream, attr, ',')) attrs.push_back(attr);
@@ -47,6 +48,7 @@ int main(int argc, char* argv[]) {
   std::string output_filename = "out.csv";
   std::string param_filename = "inactivity_period.txt";
 
+  // Parse command line flags
   for (int i = 1; i < argc; i++) {
     if (*argv[i] == '-' && *(argv[i] + 1) != '\0' && *(argv[i] + 2) == '\0') {
       switch (*(argv[i] + 1)) {
@@ -68,7 +70,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  // read in the inactivity period limiter.
+  // Read in the inactivity period limiter.
   std::ifstream param_stream(param_filename);
   if (!param_stream) {
     std::cerr << "Unable to open file " << param_filename;
@@ -80,7 +82,7 @@ int main(int argc, char* argv[]) {
             << " secs" << std::endl;
   param_stream.close();
 
-  // open output file handler.
+  // Open output file handler.
   std::ofstream outfile;
   outfile.open(output_filename);
   if (!outfile) {
@@ -88,7 +90,7 @@ int main(int argc, char* argv[]) {
     exit(1);
   }
 
-  // open input file handler.
+  // Open input file handler.
   std::ifstream infile(input_filename);
   if (!infile) {
     std::cerr << "Unable to open input file " << input_filename;
@@ -97,7 +99,7 @@ int main(int argc, char* argv[]) {
 
   SessionGenerator* session_generator =
       new SessionGenerator(session_timeout_sec, &outfile);
-  // process the weblog line by line.
+  // Process the weblog line by line.
   std::string line;
   while (std::getline(infile, line)) {
     Event event;
@@ -105,13 +107,13 @@ int main(int argc, char* argv[]) {
       session_generator->ProcessEvent(event);
     }
   }
-  // clean up.
+  // Clean up.
   infile.close();
 
-  // print pending events.
-  session_generator->PrintPendingEvents();
+  // Print pending events.
+  session_generator->PrintPendingSessions();
 
-  // clean up.
+  // Clean up.
   outfile.close();
   delete session_generator;
 }

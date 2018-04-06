@@ -59,7 +59,7 @@ function setup_testing_input_output {
 
 function compare_outputs {
   NUM_OUTPUT_FILES_PASSED=0
-  OUTPUT_FILENAME=sessionization.csv
+  OUTPUT_FILENAME=sessionization.txt
   PROJECT_ANSWER_PATH1=${GRADER_ROOT}/temp/output/${OUTPUT_FILENAME}
   TEST_ANSWER_PATH1=${GRADER_ROOT}/tests/${test_folder}/output/${OUTPUT_FILENAME}
    
@@ -79,6 +79,7 @@ function compare_outputs {
 }
 
 function run_all_tests {
+
   TEST_FOLDERS=$(ls ${GRADER_ROOT}/tests)
   NUM_TESTS=$(($(echo $(echo ${TEST_FOLDERS} | wc -w))))
   PASS_CNT=0
@@ -89,6 +90,9 @@ function run_all_tests {
     setup_testing_input_output
 
     cd ${GRADER_ROOT}/temp
+
+    make all
+
     bash run.sh 2>&1
     cd ../
 
