@@ -4,6 +4,7 @@
 2. [Data](README.md#data)
 3. [Methods](README.md#methods)
 4. [Usage](README.md#usage)
+4. [Tests](README.md#tests)
 5. [Dependence](README.md#dependence)
 6. [Directory](README.md#directory)
 
@@ -12,11 +13,12 @@
 
 Sessionization, or session identification, refers to the process to identify a 
 collection of continuous requests to one website from a user, also known as a 
-session, based on the data save by web server, e.g., a web log. 
+session, based on the data saved by web server, e.g., a web log. 
 This sessionization process allows one to study users's trends and usage patterns 
 and help develop successful business strategy. 
 
-This pipeline provides a simple, fast, and scalable way to identify sessions from large
+This pipeline, which is written in standard c++, provides a simple, fast, scalable and robust way 
+to identify sessions from large
 scale web logs.  For example, it takes only 2 minutes on my laptop to identify more than 
 $200,000$ sessions (assuming inactive period of 5 minutes) in a 2.6G log
 [`log20170630.csv`](http://www.sec.gov/dera/data/Public-EDGAR-log-file-data/2017/Qtr2/log20170630.zip) (caution: large file!).
@@ -39,6 +41,8 @@ continues as long as the same user continues to make requests. The session is ov
 An exmaple of sessionization can be illustrated as below:
 
 ![End of file illustration](images/end_of_file.png)
+<p align="center"> Figure. 1 Example of session identifications </p>
+
 The identified sessions would read like given an inactive time limit of 2 seconds.
 
     101.81.133.jja,2017-06-30 00:00:00,2017-06-30 00:00:00,1,1
@@ -52,9 +56,9 @@ The identified sessions would read like given an inactive time limit of 2 second
 
 ## Data structure
 We use a double linked list to store pending sessions, each element in list is a session pointer. Doubly linked list provides us 
-an efficient way to append and remove individual session to keep the process working in real time.  We use an unordered map to 
+a constant time to append and remove individual session to keep the process working efficiently.  We use an unordered map to 
 store the key-value pair `<session_ip, list_iterator>`, with the iterator points to list element associated with `session_ip`. 
-This way we can quickly update pending sessions without the need of inefficient lookup in the list. 
+This way we can quickly update existing sessions without the need of inefficient lookup in the list. 
 
 ## Work flow
 1. For each new event retrieved from the log, we use its timestamp to pop up expired sessions from the existing list (empty for 
@@ -63,7 +67,7 @@ the first event), given a fixed inactive period. These sessions are then printed
 2. We then integrate this new event into a session in the list as below:
   * case 1: there is pending session in list with the new event ip. We update that session's end timestamp and page count, and move it to the end of the list. 
   
-  * case 2: there is no pending session in list with this new event ip. We create a new session with given event properties and push it to the end of the session list.
+  * case 2: there is no pending session in list with this new event ip. We create a new session with given event properties and append it to the end of the session list.
   
 3. We update the map to keep track of the iterator of this pending session. 
 
@@ -76,21 +80,46 @@ the first event), given a fixed inactive period. These sessions are then printed
 * Memory-efficient: List stores pending sessions but not expired sessions, and only one session per user ip.
  
 * Dynamical processing:  the map gives us an easy way to access any list element and apply erase operation on it.
-u 
+    
 * Handling edge cases: A sorting function is applied on a set of expired sessions when printing out, so that we can handle the edge case when last update time is the same.
 
 
 # Usage
-On top level of the package, execute 
+
+A simple two step is required to use the pipeline:
+
+1. Compiling: on top level of the package, execute 
+```bash
+make all
+```
+to compile the code. By default, the executable (`SGenerator`) is being stored in `./bin`. 
+
+2. Running: on top level, type
 ```bash
 ./run.sh 
 ```
-to compile and run the pipeline. By default, the executable (`SGenerator`) is being stored in `./bin`, input (`log.csv`) and parameter(e.g., `inactivity_period.txt`) files are under `./input`, and the generated sessions (`sessionization.csv`) are stored in `./output` directory.
+to run the pipeline. 
 
-It is easy to change this script to process different input files. In `run.sh`, you could specify different input, parameter, and output files:
+By default, the input (`log.csv`) and parameter(e.g., 
+`inactivity_period.txt`) files are under `./input`, and the generated 
+sessions (`sessionization.csv`) are stored in `./output` directory.
+
+But it is easy to change `run.sh` to process different input files. 
+In `run.sh`, you could specify different input, parameter, and output files:
 ```bash
-./bin/./SGenerator -i ./input/your_input_file . -p ./input/your_param_file -o ./output/your_output_file
+./bin/./SGenerator -i your_path_to_input/your_input_file 
+-p your_path_to_param/your_param_file 
+-o your_path_to_output/your_output_file
 ```
+
+# Tests
+Go to the `./insight_testsuite` directory and execute `run_tests.sh` after compiling the code with `make all` as described in previous section.
+
+There are three tests included:
+1. sample data provided as shown in the first [Figure](README.md#fig1).
+2. test single session with multiple events
+3. test multiple sessions with same start/end times.
+4. test different inactive period.
 
 # Dependence 
 - c++ 11

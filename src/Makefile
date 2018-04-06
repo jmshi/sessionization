@@ -8,7 +8,7 @@ SRCS = $(OBJS:.o=.cpp)
 
 CC = g++
 LDR = g++
-CFLAGS = -O0 -g
+CFLAGS = -O0 #-g
 CFLAGS += -std=c++11
 
 # implicit rules

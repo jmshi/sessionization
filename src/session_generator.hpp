@@ -55,7 +55,7 @@ class SessionGenerator {
   void ProcessEvent(const Event& event);
 
   // Print outstanding sessions.
-  void PrintPendingEvents();
+  void PrintPendingSessions();
 
  private:
   typedef std::list<Session*>::iterator ListIterator;

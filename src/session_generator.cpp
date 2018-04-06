@@ -17,36 +17,35 @@ void SessionGenerator::ProcessEvent(const Event& event) {
 }
 
 void SessionGenerator::PrintExpiredSessions(const time_t& timestamp) {
-  std::multiset<Session*, SessionCompare> candidates;
-  while (!sessions_.empty() &&
-         sessions_.front()->tend < (timestamp - session_timeout_sec_)) {
+  // Use multi-set since there are sessions share same tstart/end time.
+  std::multiset<Session*, SessionCompare> expired_sessions;
+  time_t expired_timestamp = timestamp - session_timeout_sec_;
+  while (!sessions_.empty() && sessions_.front()->tend < expired_timestamp) {
     Session* front = sessions_.front();
     //std::cout << "expired ip " << front->ip << std::endl;
-    candidates.insert(front);
+    expired_sessions.insert(front);
     sessions_.pop_front();
   }
-  for (const auto& session : candidates) {
+  for (const auto& session : expired_sessions) {
     PrintSession(session);
-    std::cout << "found expired ip "
-              << (ip_to_sessions_.find(session->ip) != ip_to_sessions_.end())
-              << std::endl;
+    //std::cout << "found expired sessions "
+    //          << (ip_to_sessions_.find(session->ip) != ip_to_sessions_.end())
+    //          << std::endl;
     ip_to_sessions_.erase(ip_to_sessions_.find(session->ip));
     delete session;
   }
 }
 
-void SessionGenerator::PrintPendingEvents() {
+void SessionGenerator::PrintPendingSessions() {
+  // Sort by start time.
   sessions_.sort(PendingSessionCompare());
 
-  for (Session*& session : sessions_) {
-    std::cout << session->ip << ", " << seconds_to_str(session->tstart) << ", "
-              << seconds_to_str(session->tend) << ", " << session->ndoc << ","
-              << std::endl;
-    *out_stream_ << session->ip << "," << seconds_to_str(session->tstart) << ","
-                 << seconds_to_str(session->tend) << ","
-                 << session->tend - session->tstart + 1 << "," << session->ndoc
-                 << std::endl;
+  for (const auto& session : sessions_) {
+    PrintSession(session);
   }
+
+  sessions_.clear();
+  ip_to_sessions_.clear();
 }
 
 void SessionGenerator::PrintSession(const Session* session) {
