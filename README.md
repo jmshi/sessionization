@@ -40,7 +40,9 @@ A single user session is defined to have started when the IP address first reque
 continues as long as the same user continues to make requests. The session is over after a certain period of inactive time. 
 An exmaple of sessionization can be illustrated as below:
 
-![End of file illustration](images/end_of_file.png)[fig1](#fig1)
+![End of file illustration](images/end_of_file.png)
+<p align="center"> Figure. 1 Example of session identifications </p>
+
 The identified sessions would read like given an inactive time limit of 2 seconds.
 
     101.81.133.jja,2017-06-30 00:00:00,2017-06-30 00:00:00,1,1
