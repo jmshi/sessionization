@@ -1,7 +1,6 @@
 # Object and binary directories
 obj/
 bin/
-output/
 
 # Compiled object files
 *.o

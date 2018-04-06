@@ -59,7 +59,7 @@ function setup_testing_input_output {
 
 function compare_outputs {
   NUM_OUTPUT_FILES_PASSED=0
-  OUTPUT_FILENAME=sessionization.txt
+  OUTPUT_FILENAME=sessionization.csv
   PROJECT_ANSWER_PATH1=${GRADER_ROOT}/temp/output/${OUTPUT_FILENAME}
   TEST_ANSWER_PATH1=${GRADER_ROOT}/tests/${test_folder}/output/${OUTPUT_FILENAME}
    
