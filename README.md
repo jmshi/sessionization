@@ -85,7 +85,7 @@ On top level of the package, execute
 ```bash
 ./run.sh 
 ```
-to compile and run the pipeline. By default, the executable is being stored in `./bin`, input (log.csv) and parameter(e.g., inactivity_period.txt) files are under `./input`, and the generated sessions (sessionization.csv) are stored in `./output` directory.
+to compile and run the pipeline. By default, the executable (`SGenerator`) is being stored in `./bin`, input (`log.csv`) and parameter(e.g., `inactivity_period.txt`) files are under `./input`, and the generated sessions (`sessionization.csv`) are stored in `./output` directory.
 
 It is easy to change this script to process different input files. In `run.sh`, you could specify different input, parameter, and output files:
 ```bash
