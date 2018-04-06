@@ -96,25 +96,5 @@ It is easy to change this script to process different input files. In `run.sh`, 
 - make
 
 # Directory tree
-.
-├── bin
-├── images
-├── input
-├── insight_testsuite
-│   ├── temp
-│   │   ├── bin
-│   │   ├── input
-│   │   ├── output
-│   │   └── src
-│   └── tests
-│       ├── test_1
-│       │   ├── input
-│       │   └── output
-│       ├── test_2
-│       │   ├── input
-│       │   └── output
-│       └── test_3
-│           ├── input
-│           └── output
-├── output
-└── src
+
+![dir_tree](images/dir_tree.png)
