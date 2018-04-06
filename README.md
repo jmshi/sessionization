@@ -1,119 +1,44 @@
-<!--
+
 # Table of Contents
 1. [Introduction](README.md#introduction)
-2. [Challenge summary](README.md#challenge-summary)
-3. [Example](README.md#example)
+2. [Data](README.md#data)
+3. [Methods](README.md#methods)
+4. [Usage](README.md#usage)
+5. [Dependence](README.md#dependence)
+
 
 # Introduction
- the work flow:
- (1) read in log line by line and split into ip,date,time,cik,accession
-     extension.
- (2) if ip not in ip_map=> create a doubly linked node in ip_list, which
-     contains data(ip,ts,te,dt,nfiles),*prev,*next, which
-     also returns a pointer *node (to itself) to ip_map to create {ip:*node}
-     key-value pair in the map.
 
-     if ip is in ip_map=> retrieve the node contains the ip data with current
-     *node pointer, update the data ts,te,dt,nfiles, place the ip as a new
-     node appended at the end of the list, remove the existing ip node, and
-     rejoin the prev and next node together.
+Sessionization, or session identification, refers to the process to identify a 
+collection of continuous requests to one website from a user, also known as a 
+session, based on the data save by web server, e.g., a web log. 
+This sessionization process allows one to study users's trends and usage patterns 
+and help develop successful business strategy. 
 
-  (3) check the time for harvesting the session. if current time t+t_inactive
-      then the linked list nodes which possess te<=t could be print out and
-      removed. during output, sorted the ip's according to ts.
+This pipeline provides a simple, fast, and scalable way to identify sessions from large
+scale web logs.  For example, it takes only 2 minutes on my laptop to identify more than 
+$200,000$ sessions (assuming inactive period of 5 minutes) in a 2.6G log
+[`log20170630.csv`](http://www.sec.gov/dera/data/Public-EDGAR-log-file-data/2017/Qtr2/log20170630.zip).
 
+The pipeline therefore allows a real-time analysis of how users are accessing a website, including how long they stay 
+and the number of documents they access during their visit, provided a real-time data streaming service. 
 
-  data structures:
-  typedef Node { *node, *prev,*next,ts,te,dt,nfiles};
-  list<Node> ip_list; use ip_list.push_back(node) to insert new node to the end
-  typedef std::unordered_map <std::string,*Node> ip_map
-
-Many investors, researchers, journalists and others use the Securities and Exchange Commission's Electronic Data Gathering, Analysis and Retrieval (EDGAR) system to retrieve financial documents, whether they are doing a deep dive into a particular company's financials or learning new information that a company has revealed through their filings. 
-
-The SEC maintains EDGAR weblogs showing which IP addresses have accessed which documents for what company, and at what day and time this occurred.
-
-Imagine the SEC has asked you to take the data and produce a dashboard that would provide a real-time view into how users are accessing EDGAR, including how long they stay and the number of documents they access during the visit.
-
-While the SEC usually makes its EDGAR weblogs publicly available after a six month delay, imagine that for this challenge, the government entity has promised it would stream the data into your program in real-time and with no delay.
-
-Your job as a data engineer is to build a pipeline to ingest that stream of data and calculate how long a particular user spends on EDGAR during a visit and how many documents that user requests during the session. 
+# Data
+`log20170630` is one of [web logs](https://www.sec.gov/dera/data/edgar-log-file-data-set.html)
+of The Electronic Data Gathering, Analysis and Retrieval (EDGAR) system maintained by 
+the Securities and Exchange Commission (SEC). We also construct manually small sized csv files 
+in a similiar format to test the code.
 
 
-# Example
+# Methods 
 
-Suppose your input files contained only the following few lines. Note that the fields we are interested in are in **bold** below but will not be like that in the input file. There's also an extra newline between records below, but the input file won't have that.
-
-**`inactivity_period.txt`**
-> **2**
-
-**`log.csv`**
-
->**ip,date,time**,zone,**cik,accession,extention**,code,size,idx,norefer,noagent,find,crawler,browser
-
->**101.81.133.jja,2017-06-30,00:00:00**,0.0,**1608552.0,0001047469-17-004337,-index.htm**,200.0,80251.0,1.0,0.0,0.0,9.0,0.0,
-
->**107.23.85.jfd,2017-06-30,00:00:00**,0.0,**1027281.0,0000898430-02-001167,-index.htm**,200.0,2825.0,1.0,0.0,0.0,10.0,0.0,
-
->**107.23.85.jfd,2017-06-30,00:00:00**,0.0,**1136894.0,0000905148-07-003827,-index.htm**,200.0,3021.0,1.0,0.0,0.0,10.0,0.0,
-
->**107.23.85.jfd,2017-06-30,00:00:01**,0.0,**841535.0,0000841535-98-000002,-index.html**,200.0,2699.0,1.0,0.0,0.0,10.0,0.0,
-
->**108.91.91.hbc,2017-06-30,00:00:01**,0.0,**1295391.0,0001209784-17-000052,.txt**,200.0,19884.0,0.0,0.0,0.0,10.0,0.0,
-
->**106.120.173.jie,2017-06-30,00:00:02**,0.0,**1470683.0,0001144204-14-046448,v385454_20fa.htm**,301.0,663.0,0.0,0.0,0.0,10.0,0.0,
-
->**107.178.195.aag,2017-06-30,00:00:02**,0.0,**1068124.0,0000350001-15-000854,-xbrl.zip**,404.0,784.0,0.0,0.0,0.0,10.0,1.0,
-
->**107.23.85.jfd,2017-06-30,00:00:03**,0.0,**842814.0,0000842814-98-000001,-index.html**,200.0,2690.0,1.0,0.0,0.0,10.0,0.0,
-
->**107.178.195.aag,2017-06-30,00:00:04**,0.0,**1068124.0,0000350001-15-000731,-xbrl.zip**,404.0,784.0,0.0,0.0,0.0,10.0,1.0,
-
->**108.91.91.hbc,2017-06-30,00:00:04**,0.0,**1618174.0,0001140361-17-026711,.txt**,301.0,674.0,0.0,0.0,0.0,10.0,0.0,
-
-The single line on `inactivity_period.txt` tells us that once two seconds have elapsed since a user made a document request, we can assume that user's particular visit has ended. Any subsequent requests would be considered a new session.
-
-The first day and time listed in the input file is 2017-06-30 and the time is 00:00:00. That means at that date and time, the following ip addresses initiated a visit to EDGAR:
-
-* **101.81.133.jja** made a request for cik: **1608552.0**, accession: **0001047469-17-004337** and extention: **-index.htm**
-* **107.23.85.jfd** made a request for cik: **1027281.0**, accession: **0000898430-02-001167** and extention: **-index.htm**
-* **107.23.85.jfd** made a request for cik: **1136894.0**, accession: **0000905148-07-003827** and extention: **-index.htm**
-
-So for the first second of data that your program has encountered, it knows one user has accessed one document and a second user has requested two:
-
-![First second illustration](images/first_second.png)
-
-
-When your program reads in the input file's fourth line, it should detect that the day and time has advanced by one second. So now, this is what we know:
-
-![Second second illustration](images/second_second.png)
-
-
-Then when it reaches the sixth and seventh line:
-
-![Third second illustration](images/third_second.png)
-
-When it first reads the eighth line, it should detect that the time is now `2017-06-30 00:00:03`. For one user, `101.8.33.jja`, its session has ended because two seconds of inactivity have passed for that user. Because there was only one request, only one web page document was accessed. 
-
-![End of third second illustration](images/end_of_third.png)
-
-At that point, the output file `sessionization.txt` should contain the following line:
-
-    101.81.133.jja,2017-06-30 00:00:00,2017-06-30 00:00:00,1,1
-
-After processing the eighth line of the input file and as we examine the timestamp in the ninth line of the input file, we detect that the time has progressed to `2017-06-30 00:00:04`. For a second user, `108.91.91.hbc`, we now see that two seconds of inactivity has elapsed and we can identify a second session:
-
-![Fourth second illustration](images/fourth_second.png)
-
-The output file `sessionization.txt` should now consist of the following data:
-
-    101.81.133.jja,2017-06-30 00:00:00,2017-06-30 00:00:00,1,1
-    108.91.91.hbc,2017-06-30 00:00:01,2017-06-30 00:00:01,1,1
-
-Finally, after your program processes the ninth and 10th line, it should detect that the end of file has been reached and there are no more requests for any users. At this point, it should identify all sessions regardless of the period of inactivity:
+## Definition of a session
+A single user session is defined to have started when the IP address first requests a document from the EDGAR system and 
+continues as long as the same user continues to make requests. The session is over after a certain period of inactive time. 
+An exmaple of sessionization can be illustrated as below:
 
 ![End of file illustration](images/end_of_file.png)
-
-At that point, it should write the results to the output file, and the entire content of `sessionization.txt` should be:
+The identified sessions would read like given an inactive time limit of 2 seconds.
 
     101.81.133.jja,2017-06-30 00:00:00,2017-06-30 00:00:00,1,1
     108.91.91.hbc,2017-06-30 00:00:01,2017-06-30 00:00:01,1,1
@@ -122,11 +47,74 @@ At that point, it should write the results to the output file, and the entire co
     107.178.195.aag,2017-06-30 00:00:02,2017-06-30 00:00:04,3,2
     108.91.91.hbc,2017-06-30 00:00:04,2017-06-30 00:00:04,1,1
 
-Notice from the above output that the first two lines were the ones we had already written. 
 
-The third line details the session for `107.23.85.jfd` next because its first document request came at `2017-06-30 00:00:00`, which is earlier than any of the other remaining sessions. 
 
-The fourth line belongs to IP address, `106.120.173.jie` because that user's first document request came at `2017-06-30 00:00:02`. The first document request from `107.178.195.aag` also comes at the same time but it is listed after `106.120.173.jie` in the input file so that is why it is listed on the fifth line.
+## Data structure
+We use a double linked list to store pending sessions, each element in list is a session pointer. Doubly linked list provides us 
+an efficient way to append and remove individual session to keep the process working in real time.  We use an unordered map to 
+store the key-value pair `<session_ip, list_iterator>`, with the iterator points to list element associated with `session_ip`. 
+This way we can quickly update pending sessions without the need of inefficient lookup in the list. 
 
-The second session detected for `108.91.91.hbc` concludes the `sessionization.txt` file.
+## Work flow
+1. For each new event retrieved from the log, we use its timestamp to pop up expired sessions from the existing list (empty for 
+the first event), given a fixed inactive period. These sessions are then printed out and erased from the list and the map. 
 
+2. We then integrate this new event into a session in the list as below:
+  * case 1: there is pending session in list with the new event ip. We update that session's end timestamp and page count, and move it to the end of the list. 
+  
+  * case 2: there is no pending session in list with this new event ip. We create a new session with given event properties and push it to the end of the session list.
+  
+3. We update the map to keep track of the iterator of this pending session. 
+
+4. We start to process the next event in the log and go back to step 1. In case there is no more incoming event, e.g., reaching the end-of-file, we print the pending sessions out.
+
+## Efficacy
+
+* Easy to identify expired sessions: sessions in list are sorted by its end timestamp with above implementation, that’s why we can easily print out expired sessions (from the front) for any specified timestamp.
+
+* Memory-efficient: List stores pending sessions but not expired sessions, and only one session per user ip.
+ 
+* Dynamical processing:  the map gives us an easy way to access any list element and apply erase operation on it.
+u 
+* Handling edge cases: A sorting function is applied on a set of expired sessions when printing out, so that we can handle the edge case when last update time is the same.
+
+
+# Usage
+On top level of the package, execute 
+```bash
+./run.sh 
+```
+to compile and run the pipeline. By default, the executable is being stored in `./bin`, input (log.csv) and parameter(e.g., inactivity_period.txt) files are under `./input`, and the generated sessions (sessionization.csv) are stored in `./output` directory.
+
+It is easy to change this script to process different input files. In `run.sh`, you could specify different input, parameter, and output files:
+```bash
+./bin/./SGenerator -i ./input/your_input_file . -p ./input/your_param_file -o ./output/your_output_file
+```
+
+# Dependence 
+- c++ 11
+- make
+
+# Directory tree
+.
+├── bin
+├── images
+├── input
+├── insight_testsuite
+│   ├── temp
+│   │   ├── bin
+│   │   ├── input
+│   │   ├── output
+│   │   └── src
+│   └── tests
+│       ├── test_1
+│       │   ├── input
+│       │   └── output
+│       ├── test_2
+│       │   ├── input
+│       │   └── output
+│       └── test_3
+│           ├── input
+│           └── output
+├── output
+└── src
