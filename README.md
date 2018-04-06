@@ -105,8 +105,8 @@ sessions (`sessionization.csv`) are stored in `./output` directory.
 But it is easy to change `run.sh` to process different input files. 
 In `run.sh`, you could specify different input, parameter, and output files:
 ```bash
-./bin/./SGenerator -i your_path_to_input/your_input_file . 
--p .your_path_to_param/your_param_file 
+./bin/./SGenerator -i your_path_to_input/your_input_file 
+-p your_path_to_param/your_param_file 
 -o your_path_to_output/your_output_file
 ```
 
@@ -114,7 +114,7 @@ In `run.sh`, you could specify different input, parameter, and output files:
 Go to the `./insight_testsuite` directory and execute `run_tests.sh` after compiling the code with `make all` as described in previous section.
 
 There are three tests included:
-1. sample data provided as shown in first [Figure](README.md#fig1).
+1. sample data provided as shown in the first [Figure](README.md#fig1).
 2. test single session with multiple events
 3. test multiple sessions with same start/end times.
 4. test different inactive period.
