@@ -5,6 +5,7 @@
 3. [Methods](README.md#methods)
 4. [Usage](README.md#usage)
 5. [Dependence](README.md#dependence)
+6. [Directory](README.md#directory)
 
 
 # Introduction
@@ -18,7 +19,7 @@ and help develop successful business strategy.
 This pipeline provides a simple, fast, and scalable way to identify sessions from large
 scale web logs.  For example, it takes only 2 minutes on my laptop to identify more than 
 $200,000$ sessions (assuming inactive period of 5 minutes) in a 2.6G log
-[`log20170630.csv`](http://www.sec.gov/dera/data/Public-EDGAR-log-file-data/2017/Qtr2/log20170630.zip).
+[`log20170630.csv`](http://www.sec.gov/dera/data/Public-EDGAR-log-file-data/2017/Qtr2/log20170630.zip) (caution: large file!).
 
 The pipeline therefore allows a real-time analysis of how users are accessing a website, including how long they stay 
 and the number of documents they access during their visit, provided a real-time data streaming service. 
@@ -95,6 +96,6 @@ It is easy to change this script to process different input files. In `run.sh`, 
 - c++ 11
 - make
 
-# Directory tree
+# Directory
 
 ![dir_tree](images/dir_tree.png)
