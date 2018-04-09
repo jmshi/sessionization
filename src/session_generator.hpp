@@ -38,6 +38,7 @@ struct SessionCompare {
 
 struct PendingSessionCompare {
   bool operator()(const Session* lhs, const Session* rhs) {
+    //return (lhs->tstart < rhs->tstart);
     return (lhs->tstart == rhs->tstart) ? (lhs->index < rhs->index)
                                       : (lhs->tstart < rhs->tstart);
   }
@@ -58,6 +59,7 @@ class SessionGenerator {
  private:
   typedef std::list<Session*>::iterator ListIterator;
 
+  // index counter
   long int current_tstart_index_ = 0;
   int session_timeout_sec_;
   // Pointer not owned.
