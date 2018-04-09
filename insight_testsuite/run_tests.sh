@@ -91,8 +91,6 @@ function run_all_tests {
 
     cd ${GRADER_ROOT}/temp
 
-    make all
-
     bash run.sh 2>&1
     cd ../
 
