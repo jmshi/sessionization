@@ -1,6 +1,7 @@
 # Object and binary directories
 obj/
 bin/
+debug/
 
 # Compiled object files
 *.o

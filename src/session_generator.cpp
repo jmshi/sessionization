@@ -68,10 +68,21 @@ void SessionGenerator::AddNewEvent(const Event& event) {
     session->tstart = event.datetime;
     session->tend = event.datetime;
     session->ndoc = 1;
-    //set pindex for sessions share same tstart/tend
-    it--;
-    if (it->t=================
-    session
+    //set index for sessions share same tstart
+    if(!sessions_.empty()) {
+      ListIterator session_iter = sessions_.end();
+      --session_iter;
+      if (session->tstart == (*session_iter)->tstart) {
+        session->index = ++current_tstart_index_;
+      } else {
+        session->index = 0;
+        current_tstart_index_ = 0;
+        //current_tstart_ = session->tstart;
+      }
+    } else {
+      session->index = 0;
+      current_tstart_index_ = 0;
+    }
     sessions_.push_back(session);
   } else {  // update existing session with new event
     //std::cout << "this is an old event" << std::endl;

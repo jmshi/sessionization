@@ -4,8 +4,8 @@
 #
 
 # uncomment the following if you wish to compile the code here.
-#make clean
-#make
+make clean
+make
 ./bin/./SGenerator -i ./input/log.csv . -p ./input/inactivity_period.txt -o ./output/sessionization.txt
 
 # An example:  2.6G web log from SEC's EDGAR

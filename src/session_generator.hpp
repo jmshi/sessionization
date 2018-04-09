@@ -17,31 +17,29 @@ typedef struct Session {
   Session* next;
   time_t tstart, tend;
   int ndoc;
-  int pindex;
+  long int index;
 } Session;
 
 struct SessionCompare {
   bool operator()(const Session* lhs, const Session* rhs) {
     //return (lhs->tend == rhs->tend) ? (lhs->tstart < rhs->tstart)
     //                                : (lhs->tend < rhs->tend);
-    return (lhs->tend == rhs->tend) ? (lhs->tstart < rhs->tstart)
-                                    : (lhs->tend < rhs->tend);
     if (lhs->tend == rhs->tend) {
       if (lhs->tstart == rhs->tstart) {
-        return (lhs->pinit < rhs->pinit);
+        return (lhs->index < rhs->index);
       } else {
         return (lhs->tstart < rhs->tstart);
       }
     } else {
       return (lhs->tend < rhs->tend);
+    }
   }
 };
 
 struct PendingSessionCompare {
   bool operator()(const Session* lhs, const Session* rhs) {
-    //return lhs->tstart < rhs->tstart;
-    return (lhs->tstart == rhs->tend) ? (lhs->pinit < rhs->pinit)
-                                      : (lhs->tstart < rhs->tend);
+    return (lhs->tstart == rhs->tstart) ? (lhs->index < rhs->index)
+                                      : (lhs->tstart < rhs->tstart);
   }
 };
 
@@ -60,7 +58,7 @@ class SessionGenerator {
  private:
   typedef std::list<Session*>::iterator ListIterator;
 
-  long int pindex_current_;
+  long int current_tstart_index_ = 0;
   int session_timeout_sec_;
   // Pointer not owned.
   std::ofstream* out_stream_;
