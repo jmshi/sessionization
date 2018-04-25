@@ -76,12 +76,14 @@ the first event), given a fixed inactive period. These sessions are then printed
 For example, imagine we have constructed the doubly linked list as below with new events:
 ![doubly linked list](images/Selection_136.png)
 <p align="center"> Figure. 2 Example of storing active sessions in a doubly linked list. </p>
+
 If the next incoming event ip appears in the existing session list, we remove that session `ip1` from previous location and append session `ip1` at the end of the list with updated end time:
 ![update doubly linked list](images/Selection_137.png)
 <p align="center"> Figure. 3 Update existing session in the session list. </p>
-When the next event comes in with a timestamp t<sub>s4</sub>, if t<sub>s4</sub>-t<sub>e2</sub> exceeds the inactive time limit, we identify expired sessions and pop out them one by one from the head of the list:
+
+When the next event comes in with a timestamp ts4, if (ts4-te2) and (ts4-te3) exceed the inactive time limit, we identify expired sessions `ip2` and `ip3`. We will pop out them one by one from the head of the list and the remaining looks like this:
 ![remove doubly linked list](images/Selection_138.png)
-<p align="center"> Figure. 3 A session list after popping out the expired sessions. </p>
+<p align="center"> Figure. 4 A session list after popping out the expired sessions. </p>
 
 
 ## Efficacy
