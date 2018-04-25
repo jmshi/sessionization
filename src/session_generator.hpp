@@ -13,8 +13,6 @@ typedef struct Event {
 
 typedef struct Session {
   std::string ip;
-  Session* prev;
-  Session* next;
   time_t tstart, tend;
   int ndoc;
   long int index;
